@@ -1,11 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 type ResultCardProps = {
   score: number;
@@ -16,6 +9,7 @@ type ResultCardProps = {
   }>;
   userAnswers: string[];
   onRestart: () => void;
+  onBack: () => void;
 };
 
 export function ResultCard({
@@ -24,54 +18,80 @@ export function ResultCard({
   questions,
   userAnswers,
   onRestart,
+  onBack,
 }: ResultCardProps) {
+  const scorePercentage = Math.round((score / totalQuestions) * 100)
+  const performanceMessage = scorePercentage >= 80 ? '🎉 Outstanding!' : scorePercentage >= 60 ? '👍 Good job!' : '💪 Keep practicing!'
+
   return (
-    <>
-      <div className="text-2xl">
-        Quiz Results
-        <p className="text-2xl font-bold text-center mb-4">
-          Your score: {score} out of {totalQuestions}
-        </p>
+    <div className="space-y-8">
+      {/* Results Summary */}
+      <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-8 text-white text-center shadow-lg">
+        <h1 className="text-4xl font-bold mb-4">Quiz Complete!</h1>
+        <div className="text-6xl font-bold mb-4">{scorePercentage}%</div>
+        <p className="text-2xl mb-2">{performanceMessage}</p>
+        <p className="text-blue-100">You got {score} out of {totalQuestions} correct</p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-4">
         <Button
           onClick={onRestart}
-          className="w-[10em] text-white text-center mb-4 bg-black py-2 px-4 border-2 border-black hover:bg-white hover:text-black hover:shadow-xl"
+          className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
         >
-          Restart Quiz
+          Try Another Quiz
+        </Button>
+        <Button
+          onClick={onBack}
+          className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+        >
+          Back to Dashboard
         </Button>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-4">
-        {questions.map((question, index) => (
-          <Card
-            key={index}
-            className="w-full md:w-1/3 flex flex-col shadow-xl border-black border-2"
-          >
-            <CardHeader>
-              <CardTitle>Quiz no {index + 1}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <div className="mb-4">
-                <p
-                  className="font-semibold mb-2"
-                  dangerouslySetInnerHTML={{ __html: question.question }}
-                ></p>
-                <p className="text-white bg-green-800 rounded-full px-2 py-1 mb-2">
-                  Correct answer: {question.correct_answer}
-                </p>
-                <p
-                  className={
-                    userAnswers[index] === question.correct_answer
-                      ? "text-white bg-green-800 rounded-full px-2 py-1"
-                      : "text-white bg-red-800 rounded-full px-2 py-1"
-                  }
-                >
-                  Your answer: {userAnswers[index] || "Not answered"}
-                </p>
+
+      {/* Detailed Results */}
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-6">Detailed Results</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {questions.map((question, index) => {
+            const isCorrect = userAnswers[index] === question.correct_answer
+            return (
+              <div
+                key={index}
+                className={`p-4 rounded-xl border-2 ${
+                  isCorrect
+                    ? 'bg-green-500/10 border-green-500'
+                    : 'bg-red-500/10 border-red-500'
+                }`}
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="text-2xl mt-1">{isCorrect ? '✓' : '✗'}</div>
+                  <div className="flex-1">
+                    <h4 className="text-white font-semibold mb-2">Question {index + 1}</h4>
+                    <p
+                      className="text-slate-300 text-sm"
+                      dangerouslySetInnerHTML={{ __html: question.question }}
+                    ></p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <p className="text-slate-400">Correct answer:</p>
+                    <p className="text-green-400 font-semibold">{question.correct_answer}</p>
+                  </div>
+                  {!isCorrect && (
+                    <div>
+                      <p className="text-slate-400">Your answer:</p>
+                      <p className="text-red-400 font-semibold">{userAnswers[index] || 'Not answered'}</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </CardContent>
-            <CardFooter></CardFooter>
-          </Card>
-        ))}
+            )
+          })}
+        </div>
       </div>
-    </>
+    </div>
   );
 }

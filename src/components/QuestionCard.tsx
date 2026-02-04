@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -20,41 +19,35 @@ export function QuestionCard({
   totalQuestions,
 }: QuestionCardProps) {
   return (
-    <>
-      <div className="">
-        <div className="text-[2rem] font-bold text-center mb-4">
-          Quiz App with React JS{" "}
-        </div>
-        <p className="  text-lg">
-          This page is an example of a quiz app with React JS with shadcn ui
-          components.
-        </p>
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg">
+      <div className="mb-6">
+        <p
+          className="text-lg text-white leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: question }}
+        ></p>
       </div>
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle>
-            Question {currentQuestionIndex + 1} of {totalQuestions}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p
-            className="mb-4 text-md"
-            dangerouslySetInnerHTML={{ __html: question }}
-          ></p>
-          <RadioGroup value={selectedAnswer} onValueChange={onAnswerSelect}>
-            {answers.map((answer, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={answer} id={`answer-${index}`} />
-                <Label
-                  htmlFor={`answer-${index}`}
-                  dangerouslySetInnerHTML={{ __html: answer }}
-                  className="text-md text-justify"
-                ></Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </CardContent>
-      </Card>
-    </>
+
+      <RadioGroup value={selectedAnswer} onValueChange={onAnswerSelect}>
+        <div className="space-y-3">
+          {answers.map((answer, index) => (
+            <div
+              key={index}
+              className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                selectedAnswer === answer
+                  ? 'bg-blue-500/20 border-blue-500'
+                  : 'bg-slate-700/50 border-slate-600 hover:border-slate-500'
+              }`}
+            >
+              <RadioGroupItem value={answer} id={`answer-${index}`} className="mt-1" />
+              <Label
+                htmlFor={`answer-${index}`}
+                className="text-slate-100 text-sm leading-relaxed cursor-pointer flex-1"
+                dangerouslySetInnerHTML={{ __html: answer }}
+              ></Label>
+            </div>
+          ))}
+        </div>
+      </RadioGroup>
+    </div>
   );
 }
